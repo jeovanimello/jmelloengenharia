@@ -451,8 +451,8 @@
         let db;
         let auth;
         let userId;
-        // Make appId globally accessible
         let appId;
+        let firebaseConfig = {}; // Initialize with an empty object as default
 
 
         // Message Box implementation instead of alert/confirm
@@ -497,11 +497,19 @@
         document.addEventListener('DOMContentLoaded', async () => {
             // Firebase initialization
             appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'; // Initialize appId here
-            const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+
+            // Explicitly handle __firebase_config string and parse it
+            let rawFirebaseConfig = typeof __firebase_config !== 'undefined' ? String(__firebase_config) : '{}';
+            try {
+                firebaseConfig = JSON.parse(rawFirebaseConfig);
+            } catch (e) {
+                console.error("Erro ao analisar __firebase_config:", e);
+                firebaseConfig = {}; // Fallback to empty object on parse error
+            }
 
             if (Object.keys(firebaseConfig).length === 0) {
-                console.error("Firebase config is missing. Cannot initialize Firebase.");
-                await showMessageBox("Erro de Configuração", "Configuração do Firebase não encontrada. Por favor, recarregue a página ou contate o suporte.", "alert");
+                console.error("Configuração do Firebase está vazia ou inválida. Não é possível inicializar o Firebase.");
+                await showMessageBox("Erro de Configuração", "Configuração do Firebase não encontrada ou inválida. Por favor, recarregue a página ou contate o suporte.", "alert");
                 return;
             }
 
