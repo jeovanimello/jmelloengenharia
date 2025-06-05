@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JMello Engenharia - Soluções Completas em Projetos</title>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom colors for Tailwind */
+        :root {
+            --color-black: #000000; /* Black */
+            --color-light-gray: #E6E9ED; /* Light Gray */
+            --color-gold: #FFD700; /* Gold */
+        }
+
+        /* Custom Tailwind Configuration */
+        .min-h-screen-minus-header {
+            min-height: calc(100vh - 80px); /* Adjust based on header height */
+        }
+
+        /* Smooth scroll for anchor links */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            background-color: white;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        /* Custom utility classes based on design */
+        .bg-black {
+            background-color: var(--color-black);
+        }
+        .text-black {
+            color: var(--color-black);
+        }
+        .bg-light-gray {
+            background-color: var(--color-light-gray);
+        }
+        .bg-gold {
+            background-color: var(--color-gold);
+        }
+        .text-gold {
+            color: var(--color-gold);
+        }
+
+        /* General button styling */
+        .btn-primary {
+            @apply px-8 py-3 rounded-full font-semibold transition-all duration-300 ease-in-out;
+            background-color: var(--color-gold);
+            color: var(--color-black); /* Text on gold button should be black for contrast */
+        }
+        .btn-primary:hover {
+            @apply shadow-lg transform -translate-y-1;
+            background-color: #DAA520; /* Slightly darker gold on hover */
+        }
+        .btn-secondary {
+            @apply px-4 py-2 rounded-md font-semibold transition-all duration-300 ease-in-out;
+            background-color: var(--color-light-gray);
+            color: var(--color-black);
+        }
+        .btn-secondary:hover {
+            @apply shadow-md transform -translate-y-0.5;
+            background-color: #D3D6DA;
+        }
+        .btn-danger {
+            @apply px-4 py-2 rounded-md font-semibold transition-all duration-300 ease-in-out;
+            background-color: #EF4444; /* Red-500 */
+            color: white;
+        }
+        .btn-danger:hover {
+            @apply shadow-md transform -translate-y-0.5;
+            background-color: #DC2626; /* Red-600 */
+        }
+
+        /* General card styling for services and portfolio */
+        .card {
+            @apply bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 ease-in-out;
+            border: 1px solid var(--color-light-gray);
+        }
+
+        /* Lightbox specific styles */
+        .lightbox-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .lightbox-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .lightbox-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease-in-out;
+        }
+        .lightbox-overlay.active .lightbox-content {
+            transform: scale(1);
+        }
+        .lightbox-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        .lightbox-content .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .lightbox-content .close-btn:hover {
+            color: var(--color-gold);
+        }
+        /* Override Tailwind for rounded corners for all elements if not explicitly set by Tailwind */
+        * {
+            border-radius: 0.5rem; /* Default rounded-lg for all elements */
+        }
+        /* Specific overrides for elements that shouldn't have rounded corners or need different ones */
+        html, body, .no-round {
+            border-radius: 0 !important; /* No rounded corners for html, body, and elements with no-round class */
+        }
+        img:not(.rounded-full) {
+            border-radius: 0.5rem !important; /* Ensure images maintain rounded corners */
+        }
+        .rounded-full {
+            border-radius: 9999px !important; /* Force full roundness for specific elements */
+        }
+        /* Message box styles */
+        .message-box-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .message-box-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .message-box {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transform: scale(0.9);
+            transition: transform 0.3s ease-in-out;
+        }
+        .message-box-overlay.active .message-box {
+            transform: scale(1);
+        }
+        .message-box h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--color-black);
+        }
+        .message-box p {
+            margin-bottom: 20px;
+            color: #555;
+        }
+        .message-box button {
+            @apply btn-primary;
+        }
+        /* Loading spinner for LLM */
+        .loader {
+            border: 4px solid var(--color-light-gray);
+            border-top: 4px solid var(--color-gold);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Header / Navigation Bar -->
+    <header class="bg-black text-white p-4 fixed w-full z-50 shadow-md">
+        <nav class="container mx-auto flex justify-between items-center flex-wrap">
+            <a href="#home" class="text-3xl font-bold tracking-tight rounded-md p-2">JMello <span class="text-gold">Engenharia</span></a>
+            
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-button" class="lg:hidden text-white focus:outline-none p-2 rounded-md transition-all duration-200 hover:bg-gray-700">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+
+            <!-- Navigation Links -->
+            <ul id="main-nav" class="hidden lg:flex flex-col lg:flex-row lg:space-x-8 text-lg font-medium mt-4 lg:mt-0 w-full lg:w-auto items-center">
+                <li><a href="#home" class="hover:text-gold transition-colors duration-200 p-2 rounded-md">Início</a></li>
+                <li><a href="#sobre" class="hover:text-gold transition-colors duration-200 p-2 rounded-md">Sobre</a></li>
+                <li><a href="#servicos" class="hover:text-gold transition-colors duration-200 p-2 rounded-md">Serviços</a></li>
+                <li><a href="#portfolio" class="hover:text-gold transition-colors duration-200 p-2 rounded-md">Portfólio</a></li>
+                <li><a href="#contato" class="hover:text-gold transition-colors duration-200 p-2 rounded-md">Contato</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="relative bg-cover bg-center text-white py-32 md:py-48 flex items-center justify-center min-h-screen-minus-header" 
+                 style="background-image: url('https://placehold.co/1920x1080/000000/FFD700?text=Engenharia+Moderna'); background-attachment: fixed;">
+            <div class="absolute inset-0 bg-black opacity-70 rounded-md"></div>
+            <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
+                <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6 animate-fade-in-down rounded-md">
+                    Soluções Completas em Projetos de Engenharia
+                </h1>
+                <p class="text-lg md:text-xl mb-10 opacity-90 animate-fade-in rounded-md">
+                    Transformando ideias em realidade com excelência técnica e inovação.
+                </p>
+                <a href="#contato" class="btn-primary inline-block animate-fade-in-up rounded-full">
+                    Solicite um Orçamento
+                </a>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section id="sobre" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-4 max-w-6xl">
+                <div class="flex flex-col lg:flex-row items-center gap-12">
+                    <div class="lg:w-1/2">
+                        <h2 class="text-4xl font-bold text-black mb-6 border-b-4 border-gold pb-2 inline-block rounded-md">Sobre a JMello Engenharia</h2>
+                        <p class="text-lg leading-relaxed mb-6 rounded-md">
+                            Fundada com a visão de construir um futuro mais seguro e eficiente, a JMello Engenharia é sinônimo de confiança e inovação no setor da construção civil. Com anos de experiência, nossa equipe é composta por engenheiros altamente qualificados, dedicados a entregar projetos que superam as expectativas.
+                        </p>
+                        <h3 class="text-2xl font-semibold text-black mb-4 rounded-md">Nossa Essência</h3>
+                        <div class="space-y-4 text-md rounded-md">
+                            <p><strong class="text-gold">Missão:</strong> Entregar soluções de engenharia inovadoras e sustentáveis, garantindo a satisfação plena dos nossos clientes através da excelência técnica e do compromisso com a qualidade.</p>
+                            <p><strong class="text-gold">Visão:</strong> Ser reconhecida como líder em engenharia civil, impulsionando o desenvolvimento com responsabilidade e contribuindo para um ambiente construído mais resiliente e funcional.</p>
+                            <p><strong class="text-gold">Valores:</strong> Integridade, Inovação, Qualidade, Responsabilidade Social e Foco no Cliente.</p>
+                        </div>
+                    </div>
+                    <div class="lg:w-1/2 mt-8 lg:mt-0">
+                        <img src="https://placehold.co/600x400/000000/FFD700?text=Nossa+Equipe" alt="Imagem da Equipe JMello Engenharia" class="w-full h-auto object-cover rounded-lg shadow-xl">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="servicos" class="py-16 md:py-24 bg-light-gray">
+            <div class="container mx-auto px-4 max-w-6xl">
+                <h2 class="text-4xl font-bold text-center text-black mb-12 border-b-4 border-gold pb-2 inline-block rounded-md mx-auto block w-fit">Serviços Prestados</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Service Card 1 -->
+                    <div class="card flex flex-col items-center text-center">
+                        <div class="text-5xl text-gold mb-4">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-black mb-3 rounded-md">Regularização de Projetos</h3>
+                        <p class="text-gray-600 rounded-md">Garantimos que seus projetos estejam em conformidade com todas as normas e legislações vigentes, evitando burocracias e atrasos.</p>
+                    </div>
+                    <!-- Service Card 2 -->
+                    <div class="card flex flex-col items-center text-center">
+                        <div class="text-5xl text-gold mb-4">
+                            <i class="fas fa-ruler-combined"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-black mb-3 rounded-md">Projetos Arquitetônicos</h3>
+                        <p class="text-gray-600 rounded-md">Desenvolvemos projetos que unem estética, funcionalidade e sustentabilidade, criando espaços únicos e otimizados para suas necessidades.</p>
+                    </div>
+                    <!-- Service Card 3 -->
+                    <div class="card flex flex-col items-center text-center">
+                        <div class="text-5xl text-gold mb-4">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-black mb-3 rounded-md">Projetos Estruturais</h3>
+                        <p class="text-gray-600 rounded-md">Elaboramos estruturas seguras e eficientes, utilizando as mais modernas técnicas e softwares para garantir a solidez da sua construção.</p>
+                    </div>
+                    <!-- Service Card 4 -->
+                    <div class="card flex flex-col items-center text-center">
+                        <div class="text-5xl text-gold mb-4">
+                            <i class="fas fa-hard-hat"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-black mb-3 rounded-md">Acompanhamento de Obras</h3>
+                        <p class="text-gray-600 rounded-md">Oferecemos supervisão completa, do planejamento à execução, assegurando a qualidade, o prazo e o orçamento de sua obra.</p>
+                    </div>
+                    <!-- Service Card 5 -->
+                    <div class="card flex flex-col items-center text-center">
+                        <div class="text-5xl text-gold mb-4">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-black mb-3 rounded-md">Laudos Técnicos</h3>
+                        <p class="text-gray-600 rounded-md">Emitimos laudos e pareceres técnicos precisos para diversas finalidades, com a credibilidade e expertise que seu projeto exige.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio Section -->
+        <section id="portfolio" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-4 max-w-6xl">
+                <h2 class="text-4xl font-bold text-center text-black mb-12 border-b-4 border-gold pb-2 inline-block rounded-md mx-auto block w-fit">Projetos Realizados</h2>
+                <div id="portfolio-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Projects will be loaded here by JavaScript -->
+                </div>
+                <div class="text-center mt-12">
+                    <button id="add-project-btn" class="btn-primary">Adicionar Novo Projeto</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contato" class="py-16 md:py-24 bg-light-gray">
+            <div class="container mx-auto px-4 max-w-6xl">
+                <h2 class="text-4xl font-bold text-center text-black mb-12 border-b-4 border-gold pb-2 inline-block rounded-md mx-auto block w-fit">Entre em Contato</h2>
+                <div class="flex flex-col lg:flex-row gap-12 items-start">
+                    <div class="lg:w-1/2 w-full card p-8">
+                        <h3 class="text-2xl font-semibold text-black mb-6 rounded-md">Envie-nos uma Mensagem</h3>
+                        <form action="#" method="POST" class="space-y-6">
+                            <div>
+                                <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Nome Completo:</label>
+                                <input type="text" id="name" name="name" class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-gold transition-all duration-200" placeholder="Seu nome" required>
+                            </div>
+                            <div>
+                                <label for="email" class="block text-gray-700 text-sm font-bold mb-2">E-mail:</label>
+                                <input type="email" id="email" name="email" class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-gold transition-all duration-200" placeholder="seu.email@example.com" required>
+                            </div>
+                            <div>
+                                <label for="message" class="block text-gray-700 text-sm font-bold mb-2">Mensagem:</label>
+                                <textarea id="message" name="message" rows="6" class="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-gold transition-all duration-200" placeholder="Escreva sua mensagem aqui..." required></textarea>
+                            </div>
+                            <div>
+                                <button type="submit" class="btn-primary w-full rounded-full">
+                                    Enviar Mensagem
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="lg:w-1/2 w-full">
+                        <div class="card p-8 mb-8">
+                            <h3 class="text-2xl font-semibold text-black mb-4 rounded-md">Informações de Contato</h3>
+                            <p class="text-gray-700 mb-2 rounded-md"><i class="fas fa-map-marker-alt text-gold mr-3"></i>Rua Nicola Vetrano, 144 - Nova Cravinhos, Cravinhos-SP</p>
+                            <p class="text-700 mb-2 rounded-md"><i class="fas fa-phone-alt text-gold mr-3"></i>(16) 99458-1487</p>
+                            <p class="text-700 mb-2 rounded-md"><i class="fas fa-envelope text-gold mr-3"></i>jeovaniimello@icloud.com</p>
+                        </div>
+                        <div class="w-full h-80 rounded-lg overflow-hidden shadow-md">
+                            <!-- Google Maps Embed - Replace with actual location if needed -->
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3675.297463510006!2d-43.17700000000001!3d-22.906847!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94b9f6974950e38d%3A0x868b44618776b251!2sRua%20Nicola%20Vetrano%2C%20144%20-%20Nova%20Cravinhos%2C%20Cravinhos%20-%20SP%2C%2014170-000%2C%20Brasil!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr"
+                                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="no-round"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-10">
+        <div class="container mx-auto px-4 text-center">
+            <h3 class="text-2xl font-bold mb-4 rounded-md">JMello Engenharia</h3>
+            <div class="flex justify-center space-x-6 mb-6">
+                <a href="https://www.instagram.com/eng.jeovanimello/?hl=pt-br" target="_blank" class="text-white hover:text-gold transition-colors duration-200 text-3xl rounded-md"><i class="fab fa-instagram"></i></a>
+                <a href="https://facebook.com/jmelloengenharia" target="_blank" class="text-white hover:text-gold transition-colors duration-200 text-3xl rounded-md"><i class="fab fa-facebook"></i></a>
+            </div>
+            <div class="text-gray-400 text-sm mb-4">
+                <p>Rua Nicola Vetrano, 144 - Nova Cravinhos, Cravinhos-SP</p>
+                <p>(16) 99458-1487 | jeovaniimello@icloud.com</p>
+            </div>
+            <p class="text-gray-500 text-sm rounded-md">&copy; 2023 JMello Engenharia. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/5516994581487" target="_blank" class="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition-all duration-300 ease-in-out z-40">
+        <i class="fab fa-whatsapp text-3xl"></i>
+    </a>
+
+    <!-- Lightbox Modal for Portfolio -->
+    <div id="lightbox-overlay" class="lightbox-overlay">
+        <div class="lightbox-content relative">
+            <button class="close-btn absolute -top-8 right-0 text-white hover:text-gray-300 transition-colors duration-200">
+                <i class="fas fa-times"></i>
+            </button>
+            <img id="lightbox-image" src="" alt="Projeto Expandido" class="rounded-lg">
+            <h4 id="lightbox-title" class="text-2xl font-semibold text-black mb-2 rounded-md"></h4>
+            <p id="lightbox-type" class="text-gray-700 text-sm mb-1 rounded-md"></p>
+            <p id="lightbox-location" class="text-gray-700 text-sm mb-1 rounded-md"></p>
+            <p id="lightbox-service" class="text-gray-700 text-sm rounded-md"></p>
+            <div id="lightbox-llm-description-section" class="mt-4 pt-4 border-t border-gray-200">
+                <h5 class="text-lg font-semibold text-black mb-2 rounded-md">Descrição Detalhada (Gerada por IA)</h5>
+                <p id="lightbox-llm-description" class="text-gray-800 text-base rounded-md"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Box for Confirmations/Alerts -->
+    <div id="message-box-overlay" class="message-box-overlay">
+        <div class="message-box">
+            <h3 id="message-box-title"></h3>
+            <p id="message-box-text"></p>
+            <button id="message-box-confirm-btn" class="hidden">Confirmar</button>
+            <button id="message-box-ok-btn">OK</button>
+            <button id="message-box-cancel-btn" class="hidden btn-secondary ml-4">Cancelar</button>
+        </div>
+    </div>
+
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, query, onSnapshot, doc, setDoc, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables for Firebase
+        let app;
+        let db;
+        let auth;
+        let userId;
+        // Make appId globally accessible
+        let appId;
+
+
+        // Message Box implementation instead of alert/confirm
+        function showMessageBox(title, text, type = 'alert') {
+            return new Promise((resolve) => {
+                const msgBoxOverlay = document.getElementById('message-box-overlay');
+                const msgBoxTitle = document.getElementById('message-box-title');
+                const msgBoxText = document.getElementById('message-box-text');
+                const msgBoxOkBtn = document.getElementById('message-box-ok-btn');
+                const msgBoxConfirmBtn = document.getElementById('message-box-confirm-btn');
+                const msgBoxCancelBtn = document.getElementById('message-box-cancel-btn');
+
+                msgBoxTitle.textContent = title;
+                msgBoxText.textContent = text;
+
+                msgBoxOkBtn.classList.remove('hidden');
+                msgBoxConfirmBtn.classList.add('hidden');
+                msgBoxCancelBtn.classList.add('hidden');
+
+                const cleanup = () => {
+                    msgBoxOverlay.classList.remove('active');
+                    msgBoxOkBtn.onclick = null;
+                    msgBoxConfirmBtn.onclick = null;
+                    msgBoxCancelBtn.onclick = null;
+                };
+
+                if (type === 'confirm') {
+                    msgBoxOkBtn.classList.add('hidden');
+                    msgBoxConfirmBtn.classList.remove('hidden');
+                    msgBoxCancelBtn.classList.remove('hidden');
+
+                    msgBoxConfirmBtn.onclick = () => { cleanup(); resolve(true); };
+                    msgBoxCancelBtn.onclick = () => { cleanup(); resolve(false); };
+                } else {
+                    msgBoxOkBtn.onclick = () => { cleanup(); resolve(true); };
+                }
+
+                msgBoxOverlay.classList.add('active');
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Firebase initialization
+            appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'; // Initialize appId here
+            const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+
+            if (Object.keys(firebaseConfig).length === 0) {
+                console.error("Firebase config is missing. Cannot initialize Firebase.");
+                await showMessageBox("Erro de Configuração", "Configuração do Firebase não encontrada. Por favor, recarregue a página ou contate o suporte.", "alert");
+                return;
+            }
+
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Authenticate user
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("Usuário autenticado:", userId);
+                        setupFirestoreListeners();
+                    } else {
+                        userId = null;
+                        console.log("Nenhum usuário autenticado.");
+                        // Optionally show a message or redirect if authentication is mandatory
+                        showMessageBox("Autenticação Necessária", "Para usar o modo de edição, você precisa estar autenticado.", "alert");
+                    }
+                });
+
+            } catch (error) {
+                console.error("Erro ao inicializar Firebase:", error);
+                await showMessageBox("Erro de Inicialização", `Ocorreu um erro ao inicializar o Firebase: ${error.message}`, "alert");
+            }
+        });
+
+        const portfolioGrid = document.getElementById('portfolio-grid');
+        const addProjectBtn = document.getElementById('add-project-btn');
+
+        // Function to render a single project card
+        function renderProjectCard(project, docId) {
+            const projectCard = document.createElement('div');
+            projectCard.classList.add('portfolio-item', 'card', 'group', 'relative', 'cursor-pointer', 'flex', 'flex-col', 'justify-between');
+            projectCard.setAttribute('data-id', docId);
+
+            // Set data attributes for lightbox and LLM
+            projectCard.dataset.imageUrl = project.imageUrl || '';
+            projectCard.dataset.title = project.title;
+            projectCard.dataset.type = project.type;
+            projectCard.dataset.location = project.location;
+            projectCard.dataset.service = project.service;
+            projectCard.dataset.llmDescription = project.llmDescription || '';
+
+
+            // Display Mode HTML
+            const displayModeHtml = `
+                <div>
+                    <img src="${project.imageUrl || 'https://placehold.co/400x300/E6E9ED/000000?text=Projeto+Sem+Imagem'}" alt="${project.title}" class="w-full h-48 object-cover mb-4 rounded-lg transform transition-transform duration-300 group-hover:scale-105">
+                    <h3 class="text-xl font-semibold text-black mb-2 rounded-md project-title-display">${project.title}</h3>
+                    <p class="text-sm text-gray-600 rounded-md project-type-display">Tipo: ${project.type}</p>
+                    <p class="text-sm text-gray-600 rounded-md project-location-display">Local: ${project.location}</p>
+                    <p class="text-sm text-gray-600 rounded-md project-service-display">Serviço Realizado: ${project.service}</p>
+                    ${project.llmDescription ? `<p class="text-sm text-gray-700 mt-2 project-llm-description-display"><strong>Descrição IA:</strong> ${project.llmDescription.substring(0, 100)}...</p>` : ''}
+                </div>
+                <div class="mt-4 flex justify-end flex-wrap gap-2">
+                    <button class="generate-description-btn btn-secondary text-sm px-3 py-1 flex items-center">
+                        <i class="fas fa-magic mr-1"></i> ✨ Gerar Descrição
+                        <span class="loader hidden ml-2"></span>
+                    </button>
+                    ${project.llmDescription ? `<button class="clear-description-btn btn-secondary text-sm px-3 py-1"><i class="fas fa-eraser mr-1"></i> Limpar Descrição</button>` : ''}
+                    <button class="edit-btn btn-secondary text-sm px-3 py-1"><i class="fas fa-edit mr-1"></i> Editar</button>
+                    <button class="delete-btn btn-danger text-sm px-3 py-1"><i class="fas fa-trash-alt mr-1"></i> Excluir</button>
+                </div>
+            `;
+
+            // Edit Mode HTML (hidden by default)
+            const editModeHtml = `
+                <div class="edit-mode hidden space-y-3">
+                    <div>
+                        <label for="edit-title-${docId}" class="block text-gray-700 text-xs font-bold mb-1">Título:</label>
+                        <input type="text" id="edit-title-${docId}" value="${project.title}" class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-gold">
+                    </div>
+                    <div>
+                        <label for="edit-type-${docId}" class="block text-gray-700 text-xs font-bold mb-1">Tipo:</label>
+                        <input type="text" id="edit-type-${docId}" value="${project.type}" class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-gold">
+                    </div>
+                    <div>
+                        <label for="edit-location-${docId}" class="block text-gray-700 text-xs font-bold mb-1">Local:</label>
+                        <input type="text" id="edit-location-${docId}" value="${project.location}" class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-gold">
+                    </div>
+                    <div>
+                        <label for="edit-service-${docId}" class="block text-gray-700 text-xs font-bold mb-1">Serviço:</label>
+                        <input type="text" id="edit-service-${docId}" value="${project.service}" class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-gold">
+                    </div>
+                    <div>
+                        <label for="edit-image-url-${docId}" class="block text-gray-700 text-xs font-bold mb-1">URL da Imagem:</label>
+                        <input type="text" id="edit-image-url-${docId}" value="${project.imageUrl || ''}" class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-gold" placeholder="Cole a URL da imagem aqui">
+                    </div>
+                    <div class="flex justify-end mt-4">
+                        <button class="save-btn btn-primary text-sm px-3 py-1 mr-2"><i class="fas fa-save mr-1"></i> Salvar</button>
+                        <button class="cancel-btn btn-secondary text-sm px-3 py-1"><i class="fas fa-times mr-1"></i> Cancelar</button>
+                    </div>
+                </div>
+            `;
+            projectCard.innerHTML = displayModeHtml + editModeHtml;
+
+            // Event Listeners for the new buttons
+            const editBtn = projectCard.querySelector('.edit-btn');
+            const deleteBtn = projectCard.querySelector('.delete-btn');
+            const saveBtn = projectCard.querySelector('.save-btn');
+            const cancelBtn = projectCard.querySelector('.cancel-btn');
+            const generateDescriptionBtn = projectCard.querySelector('.generate-description-btn');
+            const clearDescriptionBtn = projectCard.querySelector('.clear-description-btn');
+
+            const displayElements = projectCard.querySelectorAll('.project-title-display, .project-type-display, .project-location-display, .project-service-display, img, .project-llm-description-display');
+            const editElements = projectCard.querySelector('.edit-mode');
+
+            // Toggle edit mode
+            editBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent lightbox from opening
+                displayElements.forEach(el => el.classList.add('hidden'));
+                editBtn.classList.add('hidden');
+                deleteBtn.classList.add('hidden');
+                generateDescriptionBtn.classList.add('hidden');
+                if (clearDescriptionBtn) clearDescriptionBtn.classList.add('hidden');
+                editElements.classList.remove('hidden');
+            });
+
+            // Cancel edit mode
+            cancelBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                displayElements.forEach(el => el.classList.remove('hidden'));
+                editBtn.classList.remove('hidden');
+                deleteBtn.classList.remove('hidden');
+                generateDescriptionBtn.classList.remove('hidden');
+                if (clearDescriptionBtn) clearDescriptionBtn.classList.remove('hidden');
+                editElements.classList.add('hidden');
+            });
+
+            // Save changes to Firestore
+            saveBtn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const newTitle = projectCard.querySelector(`#edit-title-${docId}`).value;
+                const newType = projectCard.querySelector(`#edit-type-${docId}`).value;
+                const newLocation = projectCard.querySelector(`#edit-location-${docId}`).value;
+                const newService = projectCard.querySelector(`#edit-service-${docId}`).value;
+                const newImageUrl = projectCard.querySelector(`#edit-image-url-${docId}`).value;
+
+                try {
+                    await setDoc(doc(db, `artifacts/${appId}/public/data/projects`, docId), {
+                        title: newTitle,
+                        type: newType,
+                        location: newLocation,
+                        service: newService,
+                        imageUrl: newImageUrl,
+                        llmDescription: project.llmDescription || '' // Preserve existing LLM description
+                    });
+                    await showMessageBox("Sucesso!", "Projeto atualizado com sucesso.", "alert");
+                } catch (error) {
+                    console.error("Erro ao salvar projeto:", error);
+                    await showMessageBox("Erro ao Salvar", `Ocorreu um erro ao salvar o projeto: ${error.message}`, "alert");
+                }
+            });
+
+            // Delete project from Firestore
+            deleteBtn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const confirmed = await showMessageBox("Confirmar Exclusão", "Tem certeza que deseja excluir este projeto?", "confirm");
+                if (confirmed) {
+                    try {
+                        await deleteDoc(doc(db, `artifacts/${appId}/public/data/projects`, docId));
+                        await showMessageBox("Sucesso!", "Projeto excluído com sucesso.", "alert");
+                    } catch (error) {
+                        console.error("Erro ao excluir projeto:", error);
+                        await showMessageBox("Erro ao Excluir", `Ocorreu um erro ao excluir o projeto: ${error.message}`, "alert");
+                    }
+                }
+            });
+
+            // LLM Integration: Generate Detailed Description
+            generateDescriptionBtn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                if (!userId) {
+                    await showMessageBox("Não Autenticado", "Você precisa estar autenticado para gerar descrições.", "alert");
+                    return;
+                }
+
+                generateDescriptionBtn.disabled = true;
+                const loader = generateDescriptionBtn.querySelector('.loader');
+                loader.classList.remove('hidden');
+
+                const prompt = `Crie uma descrição detalhada e atraente para o seguinte projeto de engenharia civil, destacando seu tipo, localização, serviço realizado e desafios potenciais/soluções inovadoras, mesmo que não explícitos. O projeto é: Título: ${project.title}, Tipo: ${project.type}, Local: ${project.location}, Serviço: ${project.service}. A descrição deve ter cerca de 150-200 palavras.`;
+
+                try {
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; // Canvas will automatically provide it in runtime
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const generatedText = result.candidates[0].content.parts[0].text;
+
+                        // Update Firestore with the generated description
+                        await setDoc(doc(db, `artifacts/${appId}/public/data/projects`, docId), {
+                            ...project, // Keep existing fields
+                            llmDescription: generatedText
+                        });
+                        await showMessageBox("Sucesso!", "Descrição detalhada gerada e salva com sucesso.", "alert");
+                    } else {
+                        await showMessageBox("Erro", "Não foi possível gerar a descrição. Tente novamente.", "alert");
+                        console.error("Estrutura de resposta inesperada do LLM:", result);
+                    }
+                } catch (error) {
+                    console.error("Erro ao chamar a API Gemini:", error);
+                    await showMessageBox("Erro de IA", `Ocorreu um erro ao gerar a descrição: ${error.message}`, "alert");
+                } finally {
+                    generateDescriptionBtn.disabled = false;
+                    loader.classList.add('hidden');
+                }
+            });
+
+            // LLM Integration: Clear Detailed Description
+            if (clearDescriptionBtn) {
+                clearDescriptionBtn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    if (!userId) {
+                        await showMessageBox("Não Autenticado", "Você precisa estar autenticado para limpar descrições.", "alert");
+                        return;
+                    }
+                    const confirmed = await showMessageBox("Confirmar Limpeza", "Tem certeza que deseja remover a descrição detalhada deste projeto?", "confirm");
+                    if (confirmed) {
+                        try {
+                            await setDoc(doc(db, `artifacts/${appId}/public/data/projects`, docId), {
+                                ...project,
+                                llmDescription: '' // Set LLM description to empty
+                            });
+                            await showMessageBox("Sucesso!", "Descrição detalhada removida.", "alert");
+                        } catch (error) {
+                            console.error("Erro ao limpar descrição:", error);
+                            await showMessageBox("Erro ao Limpar", `Ocorreu um erro ao limpar a descrição: ${error.message}`, "alert");
+                        }
+                    }
+                });
+            }
+
+            // Add lightbox click handler for display mode
+            projectCard.addEventListener('click', function() {
+                // Only open lightbox if not in edit mode
+                if (editElements.classList.contains('hidden')) {
+                    const imageUrl = this.dataset.imageUrl;
+                    const type = this.dataset.type;
+                    const location = this.dataset.location;
+                    const service = this.dataset.service;
+                    const title = this.dataset.title;
+                    const llmDescription = this.dataset.llmDescription;
+
+                    lightboxImage.src = imageUrl || 'https://placehold.co/800x600/E6E9ED/000000?text=Projeto+Sem+Imagem'; // Fallback
+                    lightboxTitle.textContent = title;
+                    lightboxType.textContent = `Tipo: ${type}`;
+                    lightboxLocation.textContent = `Local: ${location}`;
+                    lightboxService.textContent = `Serviço Realizado: ${service}`;
+                    
+                    const llmDescriptionSection = document.getElementById('lightbox-llm-description-section');
+                    const llmDescriptionParagraph = document.getElementById('lightbox-llm-description');
+
+                    if (llmDescription) {
+                        llmDescriptionSection.classList.remove('hidden');
+                        llmDescriptionParagraph.textContent = llmDescription;
+                    } else {
+                        llmDescriptionSection.classList.add('hidden');
+                        llmDescriptionParagraph.textContent = '';
+                    }
+
+                    lightboxOverlay.classList.add('active');
+                }
+            });
+
+            return projectCard;
+        }
+
+        // Setup Firestore listeners
+        function setupFirestoreListeners() {
+            if (!db) {
+                console.error("Firestore não está inicializado.");
+                return;
+            }
+
+            const projectsCollectionRef = collection(db, `artifacts/${appId}/public/data/projects`);
+            onSnapshot(projectsCollectionRef, (snapshot) => {
+                portfolioGrid.innerHTML = ''; // Clear current projects
+                snapshot.forEach(doc => {
+                    const project = doc.data();
+                    const docId = doc.id;
+                    portfolioGrid.appendChild(renderProjectCard(project, docId));
+                });
+            }, (error) => {
+                console.error("Erro ao buscar projetos:", error);
+                showMessageBox("Erro de Conexão", `Não foi possível carregar os projetos: ${error.message}`, "alert");
+            });
+        }
+
+        // Add New Project button handler
+        addProjectBtn.addEventListener('click', async () => {
+            if (!userId) {
+                await showMessageBox("Não Autenticado", "Você precisa estar autenticado para adicionar novos projetos.", "alert");
+                return;
+            }
+            try {
+                await addDoc(collection(db, `artifacts/${appId}/public/data/projects`), {
+                    title: "Novo Projeto",
+                    type: "Tipo do Projeto",
+                    location: "Localização",
+                    service: "Serviço",
+                    imageUrl: "https://placehold.co/400x300/E6E9ED/000000?text=Novo+Projeto",
+                    llmDescription: "" // Initialize LLM description as empty
+                });
+                await showMessageBox("Sucesso!", "Novo projeto adicionado. Você pode editá-lo agora e gerar uma descrição.", "alert");
+            } catch (error) {
+                console.error("Erro ao adicionar novo projeto:", error);
+                await showMessageBox("Erro ao Adicionar", `Ocorreu um erro ao adicionar o projeto: ${error.message}`, "alert");
+            }
+        });
+
+        // Existing lightbox and mobile menu logic
+        const lightboxOverlay = document.getElementById('lightbox-overlay');
+        const lightboxImage = document.getElementById('lightbox-image');
+        const lightboxTitle = document.getElementById('lightbox-title');
+        const lightboxType = document.getElementById('lightbox-type');
+        const lightboxLocation = document.getElementById('lightbox-location');
+        const lightboxService = document.getElementById('lightbox-service');
+        const closeBtn = lightboxOverlay.querySelector('.close-btn');
+
+        closeBtn.addEventListener('click', () => {
+            lightboxOverlay.classList.remove('active');
+        });
+
+        lightboxOverlay.addEventListener('click', (e) => {
+            if (e.target === lightboxOverlay) {
+                lightboxOverlay.classList.remove('active');
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    const headerOffset = document.querySelector('header').offsetHeight;
+                    const elementPosition = targetElement.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth"
+                    });
+
+                    // Close mobile menu if open
+                    const mobileMenu = document.getElementById('main-nav');
+                    if (mobileMenu.classList.contains('flex')) {
+                        mobileMenu.classList.remove('flex');
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mainNav = document.getElementById('main-nav');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mainNav.classList.toggle('hidden');
+            mainNav.classList.toggle('flex');
+            mainNav.classList.toggle('flex-col');
+            mainNav.classList.toggle('items-center');
+            mainNav.classList.toggle('bg-black'); /* Changed to black for mobile menu */
+            mainNav.classList.toggle('p-4'); /* Add padding for mobile menu */
+            mainNav.classList.toggle('mt-4'); /* Margin top to separate from header */
+            mainNav.classList.toggle('absolute'); /* Position absolutely below header */
+            mainNav.classList.toggle('top-full'); /* Place below the header */
+            mainNav.classList.toggle('left-0'); /* Align to the left */
+            mainNav.classList.toggle('w-full'); /* Take full width */
+            mainNav.classList.toggle('shadow-lg'); /* Add shadow */
+        });
+
+    </script>
+</body>
+</html>
